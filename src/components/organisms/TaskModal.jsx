@@ -17,23 +17,23 @@ const TaskModal = ({
   task = null, 
   loading = false 
 }) => {
-  const { categories } = useCategories();
+const { categories } = useCategories();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     priority: "medium",
-    category: "personal",
+    category: "",
     dueDate: ""
   });
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (task) {
+if (task) {
       setFormData({
         title: task.title || "",
         description: task.description || "",
         priority: task.priority || "medium",
-        category: task.category || "personal",
+        category: task.category ? task.category.toString() : "",
         dueDate: task.dueDate ? format(new Date(task.dueDate), "yyyy-MM-dd") : ""
       });
     } else {
@@ -187,8 +187,8 @@ const TaskModal = ({
                   value={formData.category}
                   onChange={(e) => handleInputChange("category", e.target.value)}
                 >
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
+{categories.map((category) => (
+                    <option key={category.Id} value={category.Id}>
                       {category.name}
                     </option>
                   ))}

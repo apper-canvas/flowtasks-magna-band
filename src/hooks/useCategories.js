@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import categoryService from "@/services/api/categoryService";
 
 export const useCategories = () => {
@@ -20,20 +20,25 @@ export const useCategories = () => {
     }
   }, []);
 
-  const getCategoryById = useCallback((id) => {
-    return categories.find(category => category.id === id);
+const getCategoryById = useCallback((id) => {
+    return categories.find(cat => cat.Id === parseInt(id) || cat.id === parseInt(id)) || null;
   }, [categories]);
 
   const getCategoryColor = useCallback((categoryId) => {
     const category = getCategoryById(categoryId);
-    return category ? category.color : "#6b7280";
+    return category?.color || '#6b7280';
   }, [getCategoryById]);
 
-  useEffect(() => {
+const getCategoryName = useCallback((categoryId) => {
+    const category = getCategoryById(categoryId);
+    return category?.name || 'Unknown Category';
+  }, [getCategoryById]);
+
+  const retryLoad = useCallback(() => {
     loadCategories();
   }, [loadCategories]);
 
-  const retryLoad = useCallback(() => {
+  useEffect(() => {
     loadCategories();
   }, [loadCategories]);
 
@@ -43,6 +48,7 @@ export const useCategories = () => {
     error,
     getCategoryById,
     getCategoryColor,
+    getCategoryName,
     retryLoad
   };
 };

@@ -15,7 +15,7 @@ const TaskCard = React.forwardRef(({
   onDelete,
   className 
 }, forwardedRef) => {
-  const { getCategoryById, getCategoryColor } = useCategories();
+const { getCategoryById, getCategoryColor } = useCategories();
   const category = getCategoryById(task.category);
   const categoryColor = getCategoryColor(task.category);
 

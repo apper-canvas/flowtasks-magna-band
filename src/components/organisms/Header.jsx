@@ -1,10 +1,15 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+import { useAuth } from "@/layouts/Root";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import ProgressRing from "@/components/molecules/ProgressRing";
 
 const Header = ({ taskStats, onCreateTask }) => {
+  const { user } = useSelector(state => state.user);
+  const { logout } = useAuth();
+
   return (
     <header className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
       <div className="flex items-center justify-between">
@@ -41,14 +46,33 @@ const Header = ({ taskStats, onCreateTask }) => {
           </div>
         </div>
 
-        <Button
-          onClick={onCreateTask}
-          className="flex items-center gap-2"
-          size="lg"
-        >
-          <ApperIcon name="Plus" size={20} />
-          Add Task
-        </Button>
+<div className="flex items-center gap-4">
+          {user && (
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <ApperIcon name="User" size={16} />
+              <span>Welcome, {user.firstName || user.emailAddress}</span>
+            </div>
+          )}
+          
+          <Button
+            onClick={onCreateTask}
+            className="flex items-center gap-2"
+            size="lg"
+          >
+            <ApperIcon name="Plus" size={20} />
+            Add Task
+          </Button>
+
+          <Button
+            onClick={logout}
+            variant="outline"
+            className="flex items-center gap-2"
+            size="lg"
+          >
+            <ApperIcon name="LogOut" size={16} />
+            Logout
+          </Button>
+        </div>
       </div>
       
       {/* Stats Bar */}

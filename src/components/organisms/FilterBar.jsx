@@ -46,13 +46,13 @@ const FilterBar = ({
         <div className="flex items-center gap-2">
           <ApperIcon name="Tag" size={16} className="text-gray-400" />
           <Select
-            value={filters.selectedCategory || ""}
+value={filters.selectedCategory || ""}
             onChange={(e) => onUpdateFilter("selectedCategory", e.target.value || null)}
             className="w-48"
           >
             <option value="">All Categories</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
+{categories.map((category) => (
+              <option key={category.Id} value={category.Id}>
                 {category.name}
               </option>
             ))}
