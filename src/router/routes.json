@@ -4,15 +4,27 @@
       "when": {
         "conditions": [
           {
-            "label": "Dashboard requires authentication",
-            "rule": "authenticated"
-          }
-        ]
-      },
-      "redirectOnDeny": "/login"
-    }
+            "label": "Dashboard requires authentication"
+}]
+  },
+  "/categories": {
+    "allow": {
+      "when": [
+        {
+          "conditions": ["authenticated"],
+          "operator": "AND"
+        }
+      ],
+      "operator": "AND"
+    },
+    "redirectOnDeny": "/login"
   },
   "/login": {
+    "allow": {
+      "when": [
+        {
+  },
+  "/login",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -24,7 +36,7 @@
       }
     }
   },
-  "/signup": {
+  "/signup",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -36,7 +48,7 @@
       }
     }
   },
-  "/callback": {
+  "/callback",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -48,7 +60,7 @@
       }
     }
   },
-  "/error": {
+  "/error",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -60,7 +72,7 @@
       }
     }
   },
-  "/prompt-password/**/*": {
+  "/prompt-password/**/*",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -72,7 +84,7 @@
       }
     }
   },
-  "/reset-password/**/*": {
+  "/reset-password/**/*",":", {
     "allow": {
       "when": {
         "conditions": [
@@ -83,5 +95,5 @@
         ]
       }
     }
-  }
-}
+  }]
+}}}}}

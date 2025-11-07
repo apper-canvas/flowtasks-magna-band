@@ -42,6 +42,52 @@ const getCategoryName = useCallback((categoryId) => {
     loadCategories();
   }, [loadCategories]);
 
+const createCategory = useCallback(async (categoryData) => {
+    try {
+      setError("");
+      const newCategory = await categoryService.create(categoryData);
+      setCategories(prev => [...prev, newCategory]);
+      return newCategory;
+    } catch (err) {
+      const errorMessage = err.message || "Failed to create category";
+      setError(errorMessage);
+      console.error("Error creating category:", err);
+      throw err;
+    }
+  }, []);
+
+  const updateCategory = useCallback(async (id, categoryData) => {
+    try {
+      setError("");
+      const updatedCategory = await categoryService.update(id, categoryData);
+      setCategories(prev => prev.map(cat => 
+        cat.Id === parseInt(id) ? updatedCategory : cat
+      ));
+      return updatedCategory;
+    } catch (err) {
+      const errorMessage = err.message || "Failed to update category";
+      setError(errorMessage);
+      console.error("Error updating category:", err);
+      throw err;
+    }
+  }, []);
+
+  const deleteCategory = useCallback(async (id) => {
+    try {
+      setError("");
+      const success = await categoryService.delete(id);
+      if (success) {
+        setCategories(prev => prev.filter(cat => cat.Id !== parseInt(id)));
+      }
+      return success;
+    } catch (err) {
+      const errorMessage = err.message || "Failed to delete category";
+      setError(errorMessage);
+      console.error("Error deleting category:", err);
+      throw err;
+    }
+  }, []);
+
   return {
     categories,
     loading,
@@ -49,6 +95,9 @@ const getCategoryName = useCallback((categoryId) => {
     getCategoryById,
     getCategoryColor,
     getCategoryName,
-    retryLoad
+    retryLoad,
+    createCategory,
+    updateCategory,
+    deleteCategory
   };
 };

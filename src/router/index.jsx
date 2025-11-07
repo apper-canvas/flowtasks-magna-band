@@ -1,10 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import React, { Suspense, lazy } from "react";
-import { getRouteConfig } from "./route.utils";
+import { getRouteConfig } from "@/router/route.utils";
 
 // Lazy load components
 const Root = lazy(() => import("@/layouts/Root"));
 const Dashboard = lazy(() => import("@/components/pages/Dashboard"));
+const Categories = lazy(() => import('@/components/pages/Categories'));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
 const Login = lazy(() => import("@/components/pages/Login"));
 const Signup = lazy(() => import("@/components/pages/Signup"));
@@ -29,16 +30,15 @@ const createRoute = ({
   path,
   index,
   element,
-  access,
   children,
-  ...meta
+  access,
+  meta = {}
 }) => {
-  // Get config for this route
   let configPath;
   if (index) {
     configPath = "/";
   } else {
-    configPath = path.startsWith('/') ? path : `/${path}`;
+    configPath = path?.startsWith('/') ? path : `/${path}`;
   }
 
   const config = getRouteConfig(configPath);
