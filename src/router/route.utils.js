@@ -93,6 +93,12 @@ function evaluateRule(rule, user) {
 
 function evaluateDynamicRule(rule, user) {
     if (!user) return false;
+    
+    // Add null-safety checks to prevent runtime errors
+    if (!rule || typeof rule !== 'string') {
+        console.warn('Invalid rule provided to evaluateDynamicRule:', rule);
+        return false;
+    }
 
     try {
         // Dynamically extract all keys and values from user object
