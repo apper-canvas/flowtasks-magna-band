@@ -4,96 +4,110 @@
       "when": {
         "conditions": [
           {
-            "label": "Dashboard requires authentication"
-}]
-  },
-  "/categories": {
-    "allow": {
-      "when": [
-        {
-          "conditions": ["authenticated"],
-          "operator": "AND"
-        }
-      ],
-      "operator": "AND"
-    },
-    "redirectOnDeny": "/login"
+            "label": "User is authenticated",
+            "rule": "authenticated"
+          }
+        ],
+        "operator": "OR"
+      },
+      "redirectOnDeny": "/login"
+    }
   },
   "/login": {
     "allow": {
-      "when": [
-        {
+      "when": {
+        "conditions": [
+          {
+            "label": "Public access",
+            "rule": "public"
+          }
+        ],
+        "operator": "OR"
+      },
+      "excludeRedirectQuery": true
+    }
   },
-  "/login",":", {
+  "/signup": {
     "allow": {
       "when": {
         "conditions": [
           {
-            "label": "Login page is public",
+            "label": "Public access",
             "rule": "public"
           }
-        ]
-      }
+        ],
+        "operator": "OR"
+      },
+      "excludeRedirectQuery": true
     }
   },
-  "/signup",":", {
+  "/callback": {
     "allow": {
       "when": {
         "conditions": [
           {
-            "label": "Signup page is public",
+            "label": "Public access",
             "rule": "public"
           }
-        ]
-      }
+        ],
+        "operator": "OR"
+      },
+      "excludeRedirectQuery": true
     }
   },
-  "/callback",":", {
+  "/error": {
     "allow": {
       "when": {
         "conditions": [
           {
-            "label": "Callback page is public",
+            "label": "Public access",
             "rule": "public"
           }
-        ]
-      }
+        ],
+        "operator": "OR"
+      },
+      "excludeRedirectQuery": true
     }
   },
-  "/error",":", {
+  "/reset-password/:appId/:fields": {
     "allow": {
       "when": {
         "conditions": [
           {
-            "label": "Error page is public",
+            "label": "Public access",
             "rule": "public"
           }
-        ]
-      }
+        ],
+        "operator": "OR"
+      },
+      "excludeRedirectQuery": true
     }
   },
-  "/prompt-password/**/*",":", {
+  "/prompt-password/:appId/:emailAddress/:provider": {
     "allow": {
       "when": {
         "conditions": [
           {
-            "label": "Password prompt is public",
+            "label": "Public access",
             "rule": "public"
           }
-        ]
-      }
+        ],
+        "operator": "OR"
+      },
+      "excludeRedirectQuery": true
     }
   },
-  "/reset-password/**/*",":", {
+  "*": {
     "allow": {
       "when": {
         "conditions": [
           {
-            "label": "Password reset is public",
+            "label": "Public access",
             "rule": "public"
           }
-        ]
+        ],
+        "operator": "OR"
       }
     }
-  }]
-}}}}}
+  }
+}
