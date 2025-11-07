@@ -1,10 +1,18 @@
 import React from "react";
+import ApperIcon from "@/components/ApperIcon";
+import Select from "@/components/atoms/Select";
 import FilterTabs from "@/components/molecules/FilterTabs";
 import SortSelect from "@/components/molecules/SortSelect";
 import SearchBar from "@/components/molecules/SearchBar";
-import Select from "@/components/atoms/Select";
-import ApperIcon from "@/components/ApperIcon";
-import { useCategories } from "@/hooks/useCategories";
+
+// Mock categories data since no category table exists in database
+const categories = [
+  { Id: 1, name: "Work" },
+  { Id: 2, name: "Personal" },
+  { Id: 3, name: "Shopping" },
+  { Id: 4, name: "Health" },
+  { Id: 5, name: "Finance" },
+];
 
 const FilterBar = ({ 
   filters, 
@@ -12,8 +20,6 @@ const FilterBar = ({
   taskStats,
   onClearSearch 
 }) => {
-  const { categories } = useCategories();
-
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-6">
       {/* Filter Tabs */}
