@@ -5,7 +5,6 @@ import { getRouteConfig } from "@/router/route.utils";
 // Lazy load components
 const Root = lazy(() => import("@/layouts/Root"));
 const Dashboard = lazy(() => import("@/components/pages/Dashboard"));
-const Categories = lazy(() => import('@/components/pages/Categories'));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
 const Login = lazy(() => import("@/components/pages/Login"));
 const Signup = lazy(() => import("@/components/pages/Signup"));
