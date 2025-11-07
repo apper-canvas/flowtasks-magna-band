@@ -8,7 +8,6 @@ import FormField from "@/components/molecules/FormField";
 import Input from "@/components/atoms/Input";
 import Textarea from "@/components/atoms/Textarea";
 import Select from "@/components/atoms/Select";
-import { useCategories } from "@/hooks/useCategories";
 
 const TaskModal = ({ 
   isOpen, 
@@ -17,7 +16,14 @@ const TaskModal = ({
   task = null, 
   loading = false 
 }) => {
-const { categories } = useCategories();
+const categories = [
+    { Id: "personal", name: "Personal" },
+    { Id: "work", name: "Work" },
+    { Id: "health", name: "Health" },
+    { Id: "finance", name: "Finance" },
+    { Id: "education", name: "Education" },
+    { Id: "other", name: "Other" }
+  ];
   const [formData, setFormData] = useState({
     title: "",
     description: "",
