@@ -7,7 +7,20 @@ import { cn } from "@/utils/cn";
 import ApperIcon from "@/components/ApperIcon";
 import Checkbox from "@/components/atoms/Checkbox";
 import Badge from "@/components/atoms/Badge";
-import { useCategories } from "@/hooks/useCategories";
+// Inline category data to replace missing useCategories hook
+const CATEGORIES = {
+  work: { id: 'work', name: 'Work', icon: 'Briefcase', color: '#6366f1' },
+  personal: { id: 'personal', name: 'Personal', icon: 'User', color: '#10b981' },
+  shopping: { id: 'shopping', name: 'Shopping', icon: 'ShoppingBag', color: '#f59e0b' },
+  health: { id: 'health', name: 'Health', icon: 'Heart', color: '#ef4444' },
+  learning: { id: 'learning', name: 'Learning', icon: 'BookOpen', color: '#8b5cf6' },
+  travel: { id: 'travel', name: 'Travel', icon: 'Plane', color: '#06b6d4' },
+  finance: { id: 'finance', name: 'Finance', icon: 'DollarSign', color: '#059669' },
+  social: { id: 'social', name: 'Social', icon: 'Users', color: '#ec4899' }
+};
+
+const getCategoryById = (categoryId) => CATEGORIES[categoryId] || null;
+const getCategoryColor = (categoryId) => CATEGORIES[categoryId]?.color || '#6b7280';
 const TaskCard = React.forwardRef(({ 
   task, 
   onToggleComplete, 
@@ -15,8 +28,7 @@ const TaskCard = React.forwardRef(({
   onDelete,
   className 
 }, forwardedRef) => {
-const { getCategoryById, getCategoryColor } = useCategories();
-  const category = getCategoryById(task.category);
+const category = getCategoryById(task.category);
   const categoryColor = getCategoryColor(task.category);
 
   const {
