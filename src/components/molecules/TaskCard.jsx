@@ -172,12 +172,18 @@ return (
             </p>
           )}
           
-          <div className="flex items-center justify-between">
+<div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {category && (
                 <Badge variant="outline" size="sm" className="flex items-center gap-1">
                   <ApperIcon name={category.icon} size={12} style={{ color: categoryColor }} />
                   {category.name}
+                </Badge>
+              )}
+              {task.project && (
+                <Badge variant="outline" size="sm" className="flex items-center gap-1">
+                  <ApperIcon name="Package" size={12} />
+                  {task.project.Name}
                 </Badge>
               )}
             </div>
