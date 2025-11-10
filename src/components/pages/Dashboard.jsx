@@ -27,19 +27,20 @@ const { tasks, loading, error, createTask, retryLoad } = useTasks();
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [selectedProject, setSelectedProject] = useState(null);
   // Load projects on component mount
+const loadProjects = async () => {
+    try {
+      setProjectsLoading(true);
+      const projectData = await projectService.getAll();
+      setProjects(projectData);
+    } catch (err) {
+      console.error("Error loading projects:", err);
+      toast.error("Failed to load projects");
+    } finally {
+      setProjectsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        setProjectsLoading(true);
-        const projectData = await projectService.getAll();
-        setProjects(projectData);
-      } catch (err) {
-        console.error("Error loading projects:", err);
-        toast.error("Failed to load projects");
-      } finally {
-        setProjectsLoading(false);
-      }
-    };
     loadProjects();
   }, []);
 const handleCreateTask = () => {
