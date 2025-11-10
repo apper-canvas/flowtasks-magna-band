@@ -104,7 +104,7 @@ const taskService = {
     }
   },
 
-  async create(taskData) {
+async create(taskData) {
     try {
       const apperClient = getApperClient();
       
@@ -127,8 +127,8 @@ const taskService = {
       const response = await apperClient.createRecord('task_c', params);
 
       if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+        console.error("Error creating task:", response.message);
+        return null;
       }
 
       if (response.results) {
@@ -136,13 +136,14 @@ const taskService = {
         const failed = response.results.filter(r => !r.success);
         
         if (failed.length > 0) {
-          console.error(`Failed to create ${failed.length} tasks:`, failed);
+          console.error(`Failed to create ${failed.length} tasks: ${JSON.stringify(failed)}`);
           failed.forEach(record => {
             record.errors?.forEach(error => {
-              throw new Error(`${error.fieldLabel}: ${error}`);
+              console.error(`Task creation field error - ${error.fieldLabel}: ${error}`);
             });
-            if (record.message) throw new Error(record.message);
+            if (record.message) console.error(`Task creation error: ${record.message}`);
           });
+          return null;
         }
 
         if (successful.length > 0) {
@@ -165,13 +166,14 @@ const taskService = {
           };
         }
       }
+      return null;
     } catch (error) {
       console.error("Error creating task:", error?.response?.data?.message || error);
-      throw error;
+      return null;
     }
   },
 
-  async update(id, updates) {
+async update(id, updates) {
     try {
       const apperClient = getApperClient();
       
@@ -194,8 +196,8 @@ const taskService = {
       const response = await apperClient.updateRecord('task_c', params);
 
       if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+        console.error("Error updating task:", response.message);
+        return null;
       }
 
       if (response.results) {
@@ -203,13 +205,14 @@ const taskService = {
         const failed = response.results.filter(r => !r.success);
         
         if (failed.length > 0) {
-          console.error(`Failed to update ${failed.length} tasks:`, failed);
+          console.error(`Failed to update ${failed.length} tasks: ${JSON.stringify(failed)}`);
           failed.forEach(record => {
             record.errors?.forEach(error => {
-              throw new Error(`${error.fieldLabel}: ${error}`);
+              console.error(`Task update field error - ${error.fieldLabel}: ${error}`);
             });
-            if (record.message) throw new Error(record.message);
+            if (record.message) console.error(`Task update error: ${record.message}`);
           });
+          return null;
         }
 
         if (successful.length > 0) {
@@ -232,13 +235,14 @@ const taskService = {
           };
         }
       }
+      return null;
     } catch (error) {
       console.error("Error updating task:", error?.response?.data?.message || error);
-      throw error;
+      return null;
     }
   },
 
-  async delete(id) {
+async delete(id) {
     try {
       const apperClient = getApperClient();
       
@@ -249,8 +253,8 @@ const taskService = {
       const response = await apperClient.deleteRecord('task_c', params);
 
       if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+        console.error("Error deleting task:", response.message);
+        return false;
       }
 
       if (response.results) {
@@ -258,10 +262,11 @@ const taskService = {
         const failed = response.results.filter(r => !r.success);
         
         if (failed.length > 0) {
-          console.error(`Failed to delete ${failed.length} tasks:`, failed);
+          console.error(`Failed to delete ${failed.length} tasks: ${JSON.stringify(failed)}`);
           failed.forEach(record => {
-            if (record.message) throw new Error(record.message);
+            if (record.message) console.error(`Task deletion error: ${record.message}`);
           });
+          return false;
         }
 
         return successful.length > 0;
@@ -270,11 +275,11 @@ const taskService = {
       return true;
     } catch (error) {
       console.error("Error deleting task:", error?.response?.data?.message || error);
-      throw error;
+      return false;
     }
   },
 
-  async toggleComplete(id, completed) {
+async toggleComplete(id, completed) {
     try {
       const apperClient = getApperClient();
       
@@ -289,8 +294,8 @@ const taskService = {
       const response = await apperClient.updateRecord('task_c', params);
 
       if (!response.success) {
-        console.error(response.message);
-        throw new Error(response.message);
+        console.error("Error toggling task completion:", response.message);
+        return false;
       }
 
       if (response.results) {
@@ -298,13 +303,14 @@ const taskService = {
         const failed = response.results.filter(r => !r.success);
         
         if (failed.length > 0) {
-          console.error(`Failed to toggle ${failed.length} tasks:`, failed);
+          console.error(`Failed to toggle ${failed.length} tasks: ${JSON.stringify(failed)}`);
           failed.forEach(record => {
             record.errors?.forEach(error => {
-              throw new Error(`${error.fieldLabel}: ${error}`);
+              console.error(`Task toggle field error - ${error.fieldLabel}: ${error}`);
             });
-            if (record.message) throw new Error(record.message);
+            if (record.message) console.error(`Task toggle error: ${record.message}`);
           });
+          return false;
         }
 
         return successful.length > 0;
@@ -313,7 +319,7 @@ const taskService = {
       return true;
     } catch (error) {
       console.error("Error toggling task completion:", error?.response?.data?.message || error);
-      throw error;
+      return false;
     }
   }
 };
