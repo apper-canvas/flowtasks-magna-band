@@ -1,15 +1,18 @@
-import { getApperClient } from '@/services/apperClient';
-
+import { getApperClient } from "@/services/apperClient";
 export const projectService = {
   async getAll() {
     try {
       const apperClient = getApperClient();
       
       const params = {
-        fields: [
+fields: [
           {"field": {"Name": "Name"}},
           {"field": {"Name": "Name_c"}},
-          {"field": {"Name": "Tags"}}
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "description_c"}},
+          {"field": {"Name": "start_date_c"}},
+          {"field": {"Name": "end_date_c"}},
+          {"field": {"Name": "milestone_c"}}
         ],
         orderBy: [{
           "fieldName": "Name",
@@ -28,11 +31,15 @@ export const projectService = {
         throw new Error(response.message);
       }
 
-      // Transform data to match UI expectations
+// Transform data to match UI expectations
       return response.data.map(project => ({
         id: project.Id,
         name: project.Name_c || project.Name,
         tags: project.Tags,
+        description: project.description_c || '',
+        startDate: project.start_date_c || null,
+        endDate: project.end_date_c || null,
+        milestone: project.milestone_c || '',
         // Add color for UI consistency (can be enhanced later)
         color: this.getProjectColor(project.Id)
       }));
@@ -47,10 +54,14 @@ export const projectService = {
       const apperClient = getApperClient();
       
       const params = {
-        fields: [
+fields: [
           {"field": {"Name": "Name"}},
           {"field": {"Name": "Name_c"}},
-          {"field": {"Name": "Tags"}}
+          {"field": {"Name": "Tags"}},
+          {"field": {"Name": "description_c"}},
+          {"field": {"Name": "start_date_c"}},
+          {"field": {"Name": "end_date_c"}},
+          {"field": {"Name": "milestone_c"}}
         ]
       };
 
@@ -65,11 +76,15 @@ export const projectService = {
         return null;
       }
 
-      // Transform data to match UI expectations
+// Transform data to match UI expectations
       return {
         id: response.data.Id,
         name: response.data.Name_c || response.data.Name,
         tags: response.data.Tags,
+        description: response.data.description_c || '',
+        startDate: response.data.start_date_c || null,
+        endDate: response.data.end_date_c || null,
+        milestone: response.data.milestone_c || '',
         color: this.getProjectColor(response.data.Id)
       };
     } catch (error) {
@@ -81,17 +96,20 @@ export const projectService = {
   async create(projectData) {
     try {
       const apperClient = getApperClient();
+const apperClient = getApperClient();
       
       // Only include updateable fields
       const params = {
         records: [{
           Name: projectData.name,
           Name_c: projectData.name,
-          Tags: projectData.tags || ""
+          Tags: projectData.tags || "",
+          description_c: projectData.description || "",
+          start_date_c: projectData.startDate || null,
+          end_date_c: projectData.endDate || null,
+          milestone_c: projectData.milestone || ""
         }]
       };
-
-      const response = await apperClient.createRecord('project_c', params);
 
       if (!response.success) {
         console.error(response.message);
@@ -110,7 +128,7 @@ export const projectService = {
             });
             if (record.message) throw new Error(record.message);
           });
-        }
+}
 
         if (successful.length > 0) {
           const created = successful[0].data;
@@ -118,6 +136,10 @@ export const projectService = {
             id: created.Id,
             name: created.Name_c || created.Name,
             tags: created.Tags,
+            description: created.description_c || '',
+            startDate: created.start_date_c || null,
+            endDate: created.end_date_c || null,
+            milestone: created.milestone_c || '',
             color: this.getProjectColor(created.Id)
           };
         }
@@ -130,7 +152,7 @@ export const projectService = {
 
   async update(id, updates) {
     try {
-      const apperClient = getApperClient();
+const apperClient = getApperClient();
       
       // Only include updateable fields
       const params = {
@@ -138,7 +160,11 @@ export const projectService = {
           Id: id,
           Name: updates.name,
           Name_c: updates.name,
-          Tags: updates.tags || ""
+          Tags: updates.tags || "",
+          description_c: updates.description || "",
+          start_date_c: updates.startDate || null,
+          end_date_c: updates.endDate || null,
+          milestone_c: updates.milestone || ""
         }]
       };
 
@@ -161,7 +187,7 @@ export const projectService = {
             });
             if (record.message) throw new Error(record.message);
           });
-        }
+}
 
         if (successful.length > 0) {
           const updated = successful[0].data;
@@ -169,6 +195,10 @@ export const projectService = {
             id: updated.Id,
             name: updated.Name_c || updated.Name,
             tags: updated.Tags,
+            description: updated.description_c || '',
+            startDate: updated.start_date_c || null,
+            endDate: updated.end_date_c || null,
+            milestone: updated.milestone_c || '',
             color: this.getProjectColor(updated.Id)
           };
         }

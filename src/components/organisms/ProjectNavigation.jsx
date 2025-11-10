@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import ProjectModal from '@/components/organisms/ProjectModal';
-import { projectService } from '@/services/api/projectService';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { projectService } from "@/services/api/projectService";
+import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import ProjectModal from "@/components/organisms/ProjectModal";
 
 const ProjectNavigation = ({ 
   projects = [], 
@@ -94,40 +94,91 @@ const ProjectNavigation = ({
             ) : (
               <AnimatePresence>
                 {projects.map((project) => (
-                  <motion.button
+<motion.div
                     key={project.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    whileHover={{ scale: 1.02, x: 4 }}
+                    whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => onSelectProject(project)}
-                    className={`w-full p-3 rounded-lg text-left transition-all duration-200 flex items-center gap-3 ${
+                    className={`w-full p-4 rounded-xl cursor-pointer text-left transition-all duration-300 border-2 ${
                       selectedProject?.id === project.id 
-                        ? 'bg-gradient-primary text-white shadow-lg' 
-                        : 'hover:bg-gray-50 text-gray-700'
+                        ? 'bg-gradient-primary text-white shadow-xl border-indigo-300 transform scale-105' 
+                        : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200 hover:border-indigo-200 shadow-sm hover:shadow-md'
                     }`}
                   >
-                    <div 
-                      className={`w-3 h-3 rounded-full ${
-                        selectedProject?.id === project.id 
-                          ? 'bg-white' 
-                          : project.color || 'bg-indigo-400'
-                      }`} 
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium truncate">{project.name}</p>
-                      {project.tags && (
-                        <p className={`text-xs truncate ${
+                    <div className="space-y-3">
+                      {/* Header with project indicator and name */}
+                      <div className="flex items-center gap-3">
+                        <div 
+                          className={`w-4 h-4 rounded-full flex-shrink-0 ${
+                            selectedProject?.id === project.id 
+                              ? 'bg-white' 
+                              : project.color || 'bg-indigo-400'
+                          }`} 
+                          style={selectedProject?.id !== project.id ? { backgroundColor: project.color || '#6366f1' } : {}}
+                        />
+                        <h3 className="font-semibold text-lg truncate flex-1">
+                          {project.name}
+                        </h3>
+                      </div>
+
+                      {/* Description preview */}
+                      {project.description && (
+                        <p className={`text-sm leading-relaxed line-clamp-2 ${
                           selectedProject?.id === project.id 
-                            ? 'text-white/80' 
-                            : 'text-gray-500'
+                            ? 'text-white/90' 
+                            : 'text-gray-600'
                         }`}>
-                          {project.tags}
+                          {project.description.substring(0, 80)}{project.description.length > 80 ? '...' : ''}
                         </p>
                       )}
+
+                      {/* Project metadata */}
+                      <div className="space-y-2">
+                        {(project.startDate || project.endDate) && (
+                          <div className={`text-xs flex items-center gap-2 ${
+                            selectedProject?.id === project.id 
+                              ? 'text-white/80' 
+                              : 'text-gray-500'
+                          }`}>
+                            <span className="font-medium">Timeline:</span>
+                            <span>
+                              {project.startDate && project.endDate 
+                                ? `${new Date(project.startDate).toLocaleDateString()} - ${new Date(project.endDate).toLocaleDateString()}`
+                                : project.startDate 
+                                  ? `Starts ${new Date(project.startDate).toLocaleDateString()}`
+                                  : `Ends ${new Date(project.endDate).toLocaleDateString()}`
+                              }
+                            </span>
+                          </div>
+                        )}
+                        
+                        {project.milestone && (
+                          <div className={`text-xs flex items-center gap-2 ${
+                            selectedProject?.id === project.id 
+                              ? 'text-white/80' 
+                              : 'text-gray-500'
+                          }`}>
+                            <span className="font-medium">Milestone:</span>
+                            <span className="truncate">{project.milestone}</span>
+                          </div>
+                        )}
+
+                        {project.tags && (
+                          <div className={`text-xs flex items-center gap-2 ${
+                            selectedProject?.id === project.id 
+                              ? 'text-white/80' 
+                              : 'text-gray-500'
+                          }`}>
+                            <span className="font-medium">Tags:</span>
+                            <span className="truncate">{project.tags}</span>
+                          </div>
+                        )}
+</div>
                     </div>
-                  </motion.button>
+                  </motion.div>
                 ))}
               </AnimatePresence>
             )}

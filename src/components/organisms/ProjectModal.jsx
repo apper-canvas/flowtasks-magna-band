@@ -7,9 +7,13 @@ import Textarea from '@/components/atoms/Textarea';
 import FormField from '@/components/molecules/FormField';
 
 const ProjectModal = ({ isOpen, onClose, onSubmit, project = null, loading = false }) => {
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
     name: '',
-    tags: ''
+    tags: '',
+    description: '',
+    startDate: '',
+    endDate: '',
+    milestone: ''
   });
   
   const [errors, setErrors] = useState({});
@@ -17,15 +21,23 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, project = null, loading = fal
   useEffect(() => {
     if (isOpen && project) {
       // Edit mode
-      setFormData({
+setFormData({
         name: project.name || '',
-        tags: project.tags || ''
+        tags: project.tags || '',
+        description: project.description || '',
+        startDate: project.startDate || '',
+        endDate: project.endDate || '',
+        milestone: project.milestone || ''
       });
     } else if (isOpen) {
       // Create mode
       setFormData({
-        name: '',
-        tags: ''
+name: '',
+        tags: '',
+        description: '',
+        startDate: '',
+        endDate: '',
+        milestone: ''
       });
     }
     setErrors({});
@@ -40,11 +52,25 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, project = null, loading = fal
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.name.trim()) {
+if (!formData.name.trim()) {
       newErrors.name = 'Project name is required';
     } else if (formData.name.length < 2) {
       newErrors.name = 'Project name must be at least 2 characters';
+    }
+
+    // Validate dates if provided
+    if (formData.startDate && formData.endDate) {
+      const startDate = new Date(formData.startDate);
+      const endDate = new Date(formData.endDate);
+      
+      if (startDate >= endDate) {
+        newErrors.endDate = 'End date must be after start date';
+      }
+    }
+
+    // Validate milestone length
+    if (formData.milestone && formData.milestone.length > 100) {
+      newErrors.milestone = 'Milestone must be less than 100 characters';
     }
 
     setErrors(newErrors);
@@ -59,9 +85,13 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, project = null, loading = fal
     }
 
     try {
-      await onSubmit({
+await onSubmit({
         name: formData.name.trim(),
-        tags: formData.tags.trim()
+        tags: formData.tags.trim(),
+        description: formData.description.trim(),
+        startDate: formData.startDate || null,
+        endDate: formData.endDate || null,
+        milestone: formData.milestone.trim()
       });
     } catch (error) {
       // Error handling is done in parent component
@@ -131,6 +161,61 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, project = null, loading = fal
                     className={errors.name ? 'border-red-300' : ''}
                   />
                 </FormField>
+<FormField 
+                  label="Description"
+                  error={errors.description}
+                >
+                  <Textarea
+                    value={formData.description}
+                    onChange={(e) => handleChange('description', e.target.value)}
+                    placeholder="Project description (optional)..."
+                    disabled={loading}
+                    className={`min-h-[100px] ${errors.description ? 'border-red-300' : ''}`}
+                    rows={4}
+                  />
+                </FormField>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField 
+                    label="Start Date"
+                    error={errors.startDate}
+                  >
+                    <Input
+                      type="date"
+                      value={formData.startDate}
+                      onChange={(e) => handleChange('startDate', e.target.value)}
+                      disabled={loading}
+                      className={errors.startDate ? 'border-red-300' : ''}
+                    />
+                  </FormField>
+
+                  <FormField 
+                    label="End Date"
+                    error={errors.endDate}
+                  >
+                    <Input
+                      type="date"
+                      value={formData.endDate}
+                      onChange={(e) => handleChange('endDate', e.target.value)}
+                      disabled={loading}
+                      className={errors.endDate ? 'border-red-300' : ''}
+                    />
+                  </FormField>
+                </div>
+
+                <FormField 
+                  label="Milestone"
+                  error={errors.milestone}
+                >
+                  <Input
+                    type="text"
+                    value={formData.milestone}
+                    onChange={(e) => handleChange('milestone', e.target.value)}
+                    placeholder="Project milestone (optional)..."
+                    disabled={loading}
+                    className={errors.milestone ? 'border-red-300' : ''}
+                  />
+                </FormField>
 
                 <FormField 
                   label="Tags"
@@ -145,7 +230,6 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, project = null, loading = fal
                     className={errors.tags ? 'border-red-300' : ''}
                   />
                 </FormField>
-
                 {/* Actions */}
                 <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
                   <Button
