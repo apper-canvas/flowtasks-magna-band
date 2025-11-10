@@ -34,27 +34,23 @@ export const useTasks = () => {
     }
   }, []);
 
-  const updateTask = useCallback(async (id, updates) => {
+const updateTask = useCallback(async (id, updates) => {
     try {
       const updatedTask = await taskService.update(id, updates);
       setTasks(prev => prev.map(task => task.id === id ? updatedTask : task));
-      toast.success("Task updated successfully!");
       return updatedTask;
     } catch (err) {
       const errorMessage = err.message || "Failed to update task";
-      toast.error(errorMessage);
       throw err;
     }
   }, []);
 
-  const deleteTask = useCallback(async (id) => {
+const deleteTask = useCallback(async (id) => {
     try {
       await taskService.delete(id);
       setTasks(prev => prev.filter(task => task.id !== id));
-      toast.success("Task deleted successfully!");
     } catch (err) {
       const errorMessage = err.message || "Failed to delete task";
-      toast.error(errorMessage);
       throw err;
     }
   }, []);
