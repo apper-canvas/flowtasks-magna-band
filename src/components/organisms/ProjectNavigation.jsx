@@ -79,22 +79,20 @@ setCreateLoading(true);
             </div>
           </div>
 
-          {/* Add Project Button */}
-          <Button
-            onClick={() => setShowCreateModal(true)}
-            className="w-full mb-6 flex items-center justify-center gap-2"
-            size="lg"
-          >
-            <ApperIcon name="Plus" size={18} />
-            Add Project
-          </Button>
-
-          {/* Projects List */}
+{/* Projects List */}
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-              Your Projects
-            </h3>
-            
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                Your Projects
+              </h3>
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                className="w-8 h-8 p-0 rounded-full bg-gradient-primary hover:shadow-lg transition-all duration-200 flex items-center justify-center"
+                size="sm"
+              >
+                <ApperIcon name="Plus" size={16} />
+              </Button>
+            </div>
             {/* All Projects Option */}
             <motion.button
               whileHover={{ scale: 1.02, x: 4 }}
