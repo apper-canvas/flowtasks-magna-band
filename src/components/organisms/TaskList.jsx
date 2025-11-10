@@ -1,24 +1,12 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import TaskCard from "@/components/molecules/TaskCard";
-import TaskModal from "@/components/organisms/TaskModal";
-import DeleteConfirmModal from "@/components/organisms/DeleteConfirmModal";
-import Empty from "@/components/ui/Empty";
+import { DndContext, KeyboardSensor, PointerSensor, TouchSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useTasks } from "@/hooks/useTasks";
+import DeleteConfirmModal from "@/components/organisms/DeleteConfirmModal";
+import TaskModal from "@/components/organisms/TaskModal";
+import TaskCard from "@/components/molecules/TaskCard";
+import Empty from "@/components/ui/Empty";
 
 const TaskList = ({ tasks, searchQuery, onCreateTask }) => {
   const { updateTask, deleteTask, toggleTaskComplete, reorderTasks } = useTasks();
@@ -26,7 +14,6 @@ const TaskList = ({ tasks, searchQuery, onCreateTask }) => {
   const [deletingTaskId, setDeletingTaskId] = useState(null);
   const [taskModalLoading, setTaskModalLoading] = useState(false);
   const [deleteModalLoading, setDeleteModalLoading] = useState(false);
-
   // Setup drag and drop sensors
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -60,7 +47,8 @@ const TaskList = ({ tasks, searchQuery, onCreateTask }) => {
     
     // Update order via hook
     reorderTasks(taskIds);
-  };
+};
+
   const deletingTask = tasks.find(task => task.id === deletingTaskId);
 
   const handleEditTask = (task) => {
@@ -78,6 +66,8 @@ const TaskList = ({ tasks, searchQuery, onCreateTask }) => {
       setTaskModalLoading(true);
       await updateTask(editingTask.id, taskData);
       setEditingTask(null);
+    } catch (error) {
+      console.error('Error updating task:', error);
     } finally {
       setTaskModalLoading(false);
     }
@@ -98,6 +88,8 @@ const TaskList = ({ tasks, searchQuery, onCreateTask }) => {
       setDeleteModalLoading(true);
       await deleteTask(deletingTaskId);
       setDeletingTaskId(null);
+    } catch (error) {
+      console.error('Error deleting task:', error);
     } finally {
       setDeleteModalLoading(false);
     }
@@ -150,7 +142,7 @@ return (
         </SortableContext>
       </DndContext>
 
-      {/* Task Edit Modal */}
+{/* Task Edit Modal */}
       <TaskModal
         isOpen={!!editingTask}
         onClose={handleCloseTaskModal}
