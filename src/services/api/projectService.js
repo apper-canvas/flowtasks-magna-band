@@ -6,7 +6,6 @@ export const projectService = {
       
       const params = {
 fields: [
-          {"field": {"Name": "Name"}},
           {"field": {"Name": "Name_c"}},
           {"field": {"Name": "Tags"}},
           {"field": {"Name": "description_c"}},
@@ -34,7 +33,7 @@ fields: [
 // Transform data to match UI expectations
       return response.data.map(project => ({
         id: project.Id,
-        name: project.Name_c || project.Name,
+name: project.Name_c,
         tags: project.Tags,
         description: project.description_c || '',
         startDate: project.start_date_c || null,
@@ -55,7 +54,6 @@ fields: [
       
       const params = {
 fields: [
-          {"field": {"Name": "Name"}},
           {"field": {"Name": "Name_c"}},
           {"field": {"Name": "Tags"}},
           {"field": {"Name": "description_c"}},
@@ -78,8 +76,8 @@ fields: [
 
 // Transform data to match UI expectations
       return {
-        id: response.data.Id,
-        name: response.data.Name_c || response.data.Name,
+id: response.data.Id,
+        name: response.data.Name_c,
         tags: response.data.Tags,
         description: response.data.description_c || '',
         startDate: response.data.start_date_c || null,
@@ -100,8 +98,7 @@ const apperClient = getApperClient();
       // Only include updateable fields
       const params = {
         records: [{
-          Name: projectData.name,
-          Name_c: projectData.name,
+Name_c: projectData.name,
           Tags: projectData.tags || "",
           description_c: projectData.description || "",
           start_date_c: projectData.startDate || null,
@@ -133,7 +130,7 @@ const response = await apperClient.createRecord('project_c', params);
           const created = successful[0].data;
           return {
             id: created.Id,
-            name: created.Name_c || created.Name,
+name: created.Name_c,
             tags: created.Tags,
             description: created.description_c || '',
             startDate: created.start_date_c || null,
@@ -157,8 +154,7 @@ const apperClient = getApperClient();
       const params = {
         records: [{
           Id: id,
-          Name: updates.name,
-          Name_c: updates.name,
+Name_c: updates.name,
           Tags: updates.tags || "",
           description_c: updates.description || "",
           start_date_c: updates.startDate || null,
@@ -191,8 +187,8 @@ const apperClient = getApperClient();
         if (successful.length > 0) {
           const updated = successful[0].data;
           return {
-            id: updated.Id,
-            name: updated.Name_c || updated.Name,
+id: updated.Id,
+            name: updated.Name_c,
             tags: updated.Tags,
             description: updated.description_c || '',
             startDate: updated.start_date_c || null,
