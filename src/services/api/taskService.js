@@ -14,12 +14,13 @@ const taskService = {
           {"field": {"Name": "description_c"}},
           {"field": {"Name": "priority_c"}},
           {"field": {"Name": "category_c"}},
-          {"field": {"Name": "due_date_c"}},
+{"field": {"Name": "due_date_c"}},
           {"field": {"Name": "status_c"}},
           {"field": {"Name": "created_at_c"}},
           {"field": {"Name": "completed_at_c"}},
           {"field": {"Name": "order_c"}},
-          {"field": {"Name": "project_c"}}
+          {"field": {"Name": "project_c"}},
+          {"field": {"Name": "assigned_to_c"}}
         ],
         orderBy: [{"fieldName": "order_c", "sorttype": "ASC"}],
         pagingInfo: {"limit": 100, "offset": 0}
@@ -43,8 +44,9 @@ const taskService = {
         dueDate: task.due_date_c || null,
         status: task.status_c || 'active',
         createdAt: task.created_at_c || null,
-        completedAt: task.completed_at_c || null,
+completedAt: task.completed_at_c || null,
         order: task.order_c || 0,
+        assignedTo: task.assigned_to_c || null,
         completed: task.status_c === 'completed'
       }));
     } catch (error) {
@@ -68,10 +70,11 @@ const taskService = {
           {"field": {"Name": "category_c"}},
           {"field": {"Name": "due_date_c"}},
           {"field": {"Name": "status_c"}},
-          {"field": {"Name": "created_at_c"}},
+{"field": {"Name": "created_at_c"}},
           {"field": {"Name": "completed_at_c"}},
           {"field": {"Name": "order_c"}},
-          {"field": {"Name": "project_c"}}
+          {"field": {"Name": "project_c"}},
+          {"field": {"Name": "assigned_to_c"}}
         ]
       };
 
@@ -96,7 +99,8 @@ const taskService = {
         createdAt: task.created_at_c || null,
         completedAt: task.completed_at_c || null,
         order: task.order_c || 0,
-        completed: task.status_c === 'completed'
+completed: task.status_c === 'completed',
+        assignedTo: task.assigned_to_c || null
       };
     } catch (error) {
       console.error(`Error fetching task ${id}:`, error?.response?.data?.message || error);
@@ -118,8 +122,9 @@ async create(taskData) {
           category_c: taskData.category ? parseInt(taskData.category) : null,
           project_c: taskData.projectId ? parseInt(taskData.projectId) : null,
           due_date_c: taskData.dueDate || null,
-          status_c: "active",
+status_c: "active",
           created_at_c: new Date().toISOString(),
+          assigned_to_c: taskData.assignedTo ? parseInt(taskData.assignedTo) : null,
           order_c: Date.now()
         }]
       };
@@ -158,8 +163,9 @@ async create(taskData) {
             category: created.category_c?.Id || null,
             projectId: created.project_c?.Id || null,
             dueDate: created.due_date_c || null,
-            status: created.status_c || 'active',
+status: created.status_c || 'active',
             createdAt: created.created_at_c || null,
+            assignedTo: created.assigned_to_c || null,
             completedAt: created.completed_at_c || null,
             order: created.order_c || 0,
             completed: created.status_c === 'completed'
@@ -188,8 +194,9 @@ async update(id, updates) {
           category_c: updates.category ? parseInt(updates.category) : null,
           project_c: updates.projectId ? parseInt(updates.projectId) : null,
           due_date_c: updates.dueDate || null,
-          status_c: updates.status || updates.completed ? 'completed' : 'active',
-          completed_at_c: updates.completed ? new Date().toISOString() : null
+status_c: updates.status || updates.completed ? 'completed' : 'active',
+          completed_at_c: updates.completed ? new Date().toISOString() : null,
+          assigned_to_c: updates.assignedTo ? parseInt(updates.assignedTo) : null
         }]
       };
 
@@ -228,8 +235,9 @@ async update(id, updates) {
             projectId: updated.project_c?.Id || null,
             dueDate: updated.due_date_c || null,
             status: updated.status_c || 'active',
-            createdAt: updated.created_at_c || null,
+createdAt: updated.created_at_c || null,
             completedAt: updated.completed_at_c || null,
+            assignedTo: updated.assigned_to_c || null,
             order: updated.order_c || 0,
             completed: updated.status_c === 'completed'
           };
@@ -338,8 +346,9 @@ async toggleComplete(id, completed) {
             dueDate: updated.due_date_c || null,
             status: updated.status_c || 'active',
             createdAt: updated.created_at_c || null,
-            completedAt: updated.completed_at_c || null,
+completedAt: updated.completed_at_c || null,
             order: updated.order_c || 0,
+            assignedTo: updated.assigned_to_c || null,
             completed: updated.status_c === 'completed'
           };
         }

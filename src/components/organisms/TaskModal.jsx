@@ -10,12 +10,13 @@ import Textarea from "@/components/atoms/Textarea";
 import Select from "@/components/atoms/Select";
 
 const TaskModal = ({ 
-  isOpen, 
+isOpen, 
   onClose, 
 onSubmit, 
   task = null, 
   projects = [],
-  loading = false 
+  users = [],
+  loading = false
 }) => {
 const categories = [
     { Id: "personal", name: "Personal" },
@@ -30,7 +31,8 @@ const categories = [
     description: "",
     priority: "medium",
 projectId: "",
-    dueDate: ""
+    dueDate: "",
+    assignedTo: ""
   });
   const [errors, setErrors] = useState({});
 
@@ -42,7 +44,8 @@ if (task) {
         priority: task.priority || "medium",
         category: task.category ? task.category.toString() : "",
 projectId: task.projectId || "",
-        dueDate: task.dueDate ? format(new Date(task.dueDate), "yyyy-MM-dd") : ""
+        dueDate: task.dueDate ? format(new Date(task.dueDate), "yyyy-MM-dd") : "",
+        assignedTo: task.assignedTo?.Id || ""
       });
     } else {
       setFormData({
@@ -50,7 +53,8 @@ projectId: task.projectId || "",
         description: "",
         priority: "medium",
 projectId: "",
-        dueDate: ""
+        dueDate: "",
+        assignedTo: ""
       });
     }
     setErrors({});
@@ -101,7 +105,8 @@ projectId: "",
 
 const submitData = {
       ...formData,
-      dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : null
+dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : null,
+      assignedTo: formData.assignedTo || null
     };
 
     try {
@@ -198,6 +203,21 @@ const submitData = {
                   {projects.map((project) => (
                     <option key={project.id} value={project.id}>
                       {project.name}
+                    </option>
+                  ))}
+                </Select>
+</FormField>
+
+              <FormField label="Assigned To" className="col-span-1">
+                <Select 
+                  value={formData.assignedTo}
+                  onChange={(e) => setFormData(prev => ({ ...prev, assignedTo: e.target.value }))}
+                  placeholder="Select assignee"
+                >
+                  <option value="">Unassigned</option>
+                  {users.map(user => (
+                    <option key={user.Id} value={user.Id}>
+                      {user.Name}
                     </option>
                   ))}
                 </Select>
