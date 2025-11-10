@@ -37,43 +37,62 @@ const createTask = useCallback(async (taskData) => {
 const updateTask = useCallback(async (id, updates) => {
     try {
       const updatedTask = await taskService.update(id, updates);
-      setTasks(prev => prev.map(task => task.id === id ? updatedTask : task));
-      return updatedTask;
+      if (updatedTask) {
+        setTasks(prev => prev.map(task => task.id === id ? updatedTask : task));
+        return updatedTask;
+      } else {
+        throw new Error("Failed to update task");
+      }
     } catch (err) {
       const errorMessage = err.message || "Failed to update task";
+      toast.error(errorMessage);
       throw err;
     }
   }, []);
 const deleteTask = useCallback(async (id) => {
     try {
-      await taskService.delete(id);
-      setTasks(prev => prev.filter(task => task.id !== id));
+      const success = await taskService.delete(id);
+      if (success) {
+        setTasks(prev => prev.filter(task => task.id !== id));
+      } else {
+        throw new Error("Failed to delete task");
+      }
     } catch (err) {
       const errorMessage = err.message || "Failed to delete task";
+      toast.error(errorMessage);
       throw err;
     }
   }, []);
 
 const toggleTaskComplete = useCallback(async (id) => {
     try {
-      const updatedTask = await taskService.toggleComplete(id);
-      setTasks(prev => prev.map(task => task.id === id ? updatedTask : task));
+      // Find current task to determine new status
+      const currentTask = tasks.find(task => task.id === id);
+      const newCompletedStatus = !currentTask?.completed;
       
-      if (updatedTask.status === "completed") {
-        toast.success("🎉 Task completed! Great job!", {
-          autoClose: 2000,
-        });
+      const updatedTask = await taskService.toggleComplete(id, newCompletedStatus);
+      
+      if (updatedTask) {
+        setTasks(prev => prev.map(task => task.id === id ? updatedTask : task));
+        
+        if (updatedTask.status === "completed") {
+          toast.success("🎉 Task completed! Great job!", {
+            autoClose: 2000,
+          });
+        } else {
+          toast.info("Task reopened");
+        }
+        
+        return updatedTask;
       } else {
-        toast.info("Task reopened");
+        throw new Error("Failed to update task status");
       }
-      
-      return updatedTask;
     } catch (err) {
       const errorMessage = err.message || "Failed to update task status";
       toast.error(errorMessage);
       throw err;
     }
-  }, []);
+  }, [tasks]);
   const reorderTasks = useCallback(async (taskIds) => {
 try {
       // Optimistically update local state

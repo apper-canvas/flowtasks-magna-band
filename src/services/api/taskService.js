@@ -217,7 +217,7 @@ async update(id, updates) {
 
         if (successful.length > 0) {
           const updated = successful[0].data;
-          return {
+          const taskObject = {
             id: updated.Id,
             name: updated.Name || updated.title_c,
             title: updated.title_c || updated.Name,
@@ -233,6 +233,12 @@ async update(id, updates) {
             order: updated.order_c || 0,
             completed: updated.status_c === 'completed'
           };
+          
+          // Import toast at the top of the file if not already imported
+          const { toast } = await import('react-toastify');
+          toast.success("Task updated successfully!");
+          
+          return taskObject;
         }
       }
       return null;
@@ -269,7 +275,12 @@ async delete(id) {
           return false;
         }
 
-        return successful.length > 0;
+        if (successful.length > 0) {
+          // Import toast at the top of the file if not already imported
+          const { toast } = await import('react-toastify');
+          toast.success("Task deleted successfully!");
+          return true;
+        }
       }
 
       return true;
@@ -295,7 +306,7 @@ async toggleComplete(id, completed) {
 
       if (!response.success) {
         console.error("Error toggling task completion:", response.message);
-        return false;
+        return null;
       }
 
       if (response.results) {
@@ -310,16 +321,34 @@ async toggleComplete(id, completed) {
             });
             if (record.message) console.error(`Task toggle error: ${record.message}`);
           });
-          return false;
+          return null;
         }
 
-        return successful.length > 0;
+        if (successful.length > 0) {
+          const updated = successful[0].data;
+          return {
+            id: updated.Id,
+            name: updated.Name || updated.title_c,
+            title: updated.title_c || updated.Name,
+            tags: updated.Tags || '',
+            description: updated.description_c || '',
+            priority: updated.priority_c || 'medium',
+            category: updated.category_c?.Id || null,
+            projectId: updated.project_c?.Id || null,
+            dueDate: updated.due_date_c || null,
+            status: updated.status_c || 'active',
+            createdAt: updated.created_at_c || null,
+            completedAt: updated.completed_at_c || null,
+            order: updated.order_c || 0,
+            completed: updated.status_c === 'completed'
+          };
+        }
       }
 
-      return true;
+      return null;
     } catch (error) {
       console.error("Error toggling task completion:", error?.response?.data?.message || error);
-      return false;
+      return null;
     }
   }
 };
