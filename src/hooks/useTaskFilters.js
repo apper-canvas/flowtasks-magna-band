@@ -34,8 +34,9 @@ export const useTaskFilters = (tasks = []) => {
   }
 
   // Filter tasks based on current filters
-  const filteredAndSortedTasks = useMemo(() => {
-    let filtered = [...tasks]
+const filteredAndSortedTasks = useMemo(() => {
+    // Filter out null/undefined tasks first
+    let filtered = tasks.filter(task => task != null)
 
     // Project filter - Apply this first to filter by selected project
     if (filters.selectedProject) {
@@ -99,27 +100,29 @@ export const useTaskFilters = (tasks = []) => {
     }
 
     // Sort tasks
-    filtered.sort((a, b) => {
+filtered.sort((a, b) => {
+      // Additional safety check for null objects
+      if (!a || !b) return 0
       let aValue, bValue
       
       switch (filters.sortBy) {
         case 'priority':
           const priorityOrder = { high: 3, medium: 2, low: 1 }
-          aValue = priorityOrder[a.priority] || 0
-          bValue = priorityOrder[b.priority] || 0
+aValue = priorityOrder[a?.priority] || 0
+          bValue = priorityOrder[b?.priority] || 0
           break
         case 'created':
-          aValue = new Date(a.createdAt || 0)
-          bValue = new Date(b.createdAt || 0)
+aValue = new Date(a?.createdAt || 0)
+          bValue = new Date(b?.createdAt || 0)
           break
         case 'title':
-          aValue = a.title?.toLowerCase() || ''
-          bValue = b.title?.toLowerCase() || ''
+aValue = a?.title?.toLowerCase() || ''
+          bValue = b?.title?.toLowerCase() || ''
           break
         case 'dueDate':
         default:
-          aValue = a.dueDate ? new Date(a.dueDate) : new Date('9999-12-31')
-          bValue = b.dueDate ? new Date(b.dueDate) : new Date('9999-12-31')
+aValue = a?.dueDate ? new Date(a.dueDate) : new Date('9999-12-31')
+          bValue = b?.dueDate ? new Date(b.dueDate) : new Date('9999-12-31')
           break
       }
       
