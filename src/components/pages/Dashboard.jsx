@@ -136,8 +136,9 @@ return (
               tasks={filteredAndSortedTasks}
               searchQuery={filters.searchQuery}
               projects={projects}
+              selectedProject={selectedProject}
               onCreateTask={handleCreateTask}
-updateTask={async (id, taskData) => {
+              updateTask={async (id, taskData) => {
                 try {
                   const taskService = (await import('@/services/api/taskService.js')).default;
                   const updatedTask = await taskService.update(id, taskData);

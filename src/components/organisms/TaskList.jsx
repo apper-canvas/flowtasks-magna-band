@@ -94,22 +94,26 @@ setTaskModalLoading(true);
     }
   };
 
-  if (tasks.length === 0) {
-    const emptyProps = searchQuery
-      ? {
-          title: "No tasks found",
-          description: `No tasks match "${searchQuery}". Try adjusting your search.`,
-          icon: "Search",
-          actionLabel: "Clear Search",
-          onAction: () => window.location.reload()
-        }
-      : {
-          title: "No tasks yet",
-          description: "Get started by adding your first task and stay organized!",
-          icon: "CheckSquare",
-          actionLabel: "Add Your First Task",
-          onAction: onCreateTask
-        };
+if (tasks.length === 0) {
+    let emptyProps;
+    
+    if (searchQuery) {
+      emptyProps = {
+        title: "No tasks found",
+        description: `No tasks match "${searchQuery}". Try adjusting your search.`,
+        icon: "Search",
+        actionLabel: "Clear Search",
+        onAction: () => window.location.reload()
+      };
+    } else {
+      emptyProps = {
+        title: "No tasks yet",
+        description: "Get started by adding your first task and stay organized!",
+        icon: "CheckSquare",
+        actionLabel: "Add Your First Task",
+        onAction: onCreateTask
+      };
+    }
 
     return <Empty {...emptyProps} />;
   }
