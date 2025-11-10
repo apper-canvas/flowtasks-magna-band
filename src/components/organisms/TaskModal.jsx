@@ -12,8 +12,9 @@ import Select from "@/components/atoms/Select";
 const TaskModal = ({ 
   isOpen, 
   onClose, 
-  onSubmit, 
+onSubmit, 
   task = null, 
+  projects = [],
   loading = false 
 }) => {
 const categories = [
@@ -22,13 +23,13 @@ const categories = [
     { Id: "health", name: "Health" },
     { Id: "finance", name: "Finance" },
     { Id: "education", name: "Education" },
-    { Id: "other", name: "Other" }
+{ Id: "other", name: "Other" }
   ];
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     priority: "medium",
-    category: "",
+projectId: "",
     dueDate: ""
   });
   const [errors, setErrors] = useState({});
@@ -40,6 +41,7 @@ if (task) {
         description: task.description || "",
         priority: task.priority || "medium",
         category: task.category ? task.category.toString() : "",
+projectId: task.projectId || "",
         dueDate: task.dueDate ? format(new Date(task.dueDate), "yyyy-MM-dd") : ""
       });
     } else {
@@ -47,7 +49,7 @@ if (task) {
         title: "",
         description: "",
         priority: "medium",
-        category: "personal",
+projectId: "",
         dueDate: ""
       });
     }
@@ -97,7 +99,7 @@ if (task) {
     
     if (!validateForm()) return;
 
-    const submitData = {
+const submitData = {
       ...formData,
       dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : null
     };
@@ -184,18 +186,18 @@ if (task) {
                   <option value="high">High Priority</option>
                 </Select>
               </FormField>
-
-              <FormField
-                label="Category"
-                error={errors.category}
+<FormField
+                label="Project"
+                error={errors.projectId}
               >
                 <Select
-                  value={formData.category}
-                  onChange={(e) => handleInputChange("category", e.target.value)}
+                  value={formData.projectId}
+                  onChange={(e) => handleInputChange("projectId", e.target.value)}
                 >
-{categories.map((category) => (
-                    <option key={category.Id} value={category.Id}>
-                      {category.name}
+                  <option value="">Select a project</option>
+                  {projects.map((project) => (
+                    <option key={project.id} value={project.id}>
+                      {project.name}
                     </option>
                   ))}
                 </Select>

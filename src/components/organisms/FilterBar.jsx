@@ -5,19 +5,13 @@ import FilterTabs from "@/components/molecules/FilterTabs";
 import SortSelect from "@/components/molecules/SortSelect";
 import SearchBar from "@/components/molecules/SearchBar";
 
-// Mock categories data since no category table exists in database
-const categories = [
-  { Id: 1, name: "Work" },
-  { Id: 2, name: "Personal" },
-  { Id: 3, name: "Shopping" },
-  { Id: 4, name: "Health" },
-  { Id: 5, name: "Finance" },
-];
+// Projects are now loaded dynamically from the database via projectService
 
 const FilterBar = ({ 
   filters, 
   onUpdateFilter, 
   taskStats,
+  projects = [],
   onClearSearch 
 }) => {
   return (
@@ -47,19 +41,19 @@ const FilterBar = ({
         />
       </div>
 
-      {/* Category Filter */}
+{/* Project Filter */}
       <div className="mt-4">
         <div className="flex items-center gap-2">
-          <ApperIcon name="Tag" size={16} className="text-gray-400" />
+          <ApperIcon name="Package" size={16} className="text-gray-400" />
           <Select
-value={filters.selectedCategory || ""}
-            onChange={(e) => onUpdateFilter("selectedCategory", e.target.value || null)}
+            value={filters.selectedProject || ""}
+            onChange={(e) => onUpdateFilter("selectedProject", e.target.value || null)}
             className="w-48"
           >
-            <option value="">All Categories</option>
-{categories.map((category) => (
-              <option key={category.Id} value={category.Id}>
-                {category.name}
+            <option value="">All Projects</option>
+            {projects.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
               </option>
             ))}
           </Select>

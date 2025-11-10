@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/organisms/Header";
 import FilterBar from "@/components/organisms/FilterBar";
@@ -8,9 +8,11 @@ import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import { useTasks } from "@/hooks/useTasks";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
+import { projectService } from "@/services/api/projectService";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
-  const { tasks, loading, error, createTask, retryLoad } = useTasks();
+const { tasks, loading, error, createTask, retryLoad } = useTasks();
   const { 
     filters, 
     updateFilter, 
@@ -21,8 +23,26 @@ const Dashboard = () => {
   
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [createModalLoading, setCreateModalLoading] = useState(false);
-
-  const handleCreateTask = () => {
+  const [projects, setProjects] = useState([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  
+  // Load projects on component mount
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        setProjectsLoading(true);
+        const projectData = await projectService.getAll();
+        setProjects(projectData);
+      } catch (err) {
+        console.error("Error loading projects:", err);
+        toast.error("Failed to load projects");
+      } finally {
+        setProjectsLoading(false);
+      }
+    };
+    loadProjects();
+  }, []);
+const handleCreateTask = () => {
     setCreateModalOpen(true);
   };
 
@@ -30,7 +50,7 @@ const Dashboard = () => {
     setCreateModalOpen(false);
   };
 
-  const handleSubmitCreate = async (taskData) => {
+const handleSubmitCreate = async (taskData) => {
     try {
       setCreateModalLoading(true);
       await createTask(taskData);
@@ -44,7 +64,7 @@ const Dashboard = () => {
     updateFilter("searchQuery", "");
   };
 
-  if (loading) {
+if (loading || projectsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 p-4">
         <div className="max-w-4xl mx-auto">
@@ -72,15 +92,16 @@ const Dashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <Header 
+<Header 
             taskStats={taskStats} 
             onCreateTask={handleCreateTask} 
           />
           
-          <FilterBar
+<FilterBar
             filters={filters}
             onUpdateFilter={updateFilter}
             taskStats={taskStats}
+            projects={projects}
             onClearSearch={handleClearSearch}
           />
           
@@ -89,9 +110,10 @@ const Dashboard = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <TaskList
+<TaskList
               tasks={filteredAndSortedTasks}
               searchQuery={filters.searchQuery}
+              projects={projects}
               onCreateTask={handleCreateTask}
             />
           </motion.div>
@@ -99,10 +121,11 @@ const Dashboard = () => {
       </div>
 
       {/* Create Task Modal */}
-      <TaskModal
+<TaskModal
         isOpen={createModalOpen}
         onClose={handleCloseCreateModal}
         onSubmit={handleSubmitCreate}
+        projects={projects}
         loading={createModalLoading}
       />
     </div>

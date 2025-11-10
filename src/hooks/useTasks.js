@@ -7,7 +7,7 @@ export const useTasks = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const loadTasks = useCallback(async () => {
+const loadTasks = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
@@ -21,7 +21,7 @@ export const useTasks = () => {
     }
   }, []);
 
-  const createTask = useCallback(async (taskData) => {
+const createTask = useCallback(async (taskData) => {
     try {
       const newTask = await taskService.create(taskData);
       setTasks(prev => [newTask, ...prev]);
@@ -44,7 +44,6 @@ const updateTask = useCallback(async (id, updates) => {
       throw err;
     }
   }, []);
-
 const deleteTask = useCallback(async (id) => {
     try {
       await taskService.delete(id);
@@ -55,7 +54,7 @@ const deleteTask = useCallback(async (id) => {
     }
   }, []);
 
-  const toggleTaskComplete = useCallback(async (id) => {
+const toggleTaskComplete = useCallback(async (id) => {
     try {
       const updatedTask = await taskService.toggleComplete(id);
       setTasks(prev => prev.map(task => task.id === id ? updatedTask : task));
@@ -71,13 +70,12 @@ const deleteTask = useCallback(async (id) => {
       return updatedTask;
     } catch (err) {
       const errorMessage = err.message || "Failed to update task status";
-toast.error(errorMessage);
+      toast.error(errorMessage);
       throw err;
     }
   }, []);
-
   const reorderTasks = useCallback(async (taskIds) => {
-    try {
+try {
       // Optimistically update local state
       setTasks(prev => {
         const taskMap = {};
@@ -98,11 +96,11 @@ toast.error(errorMessage);
       throw err;
     }
   }, [loadTasks]);
-  useEffect(() => {
+useEffect(() => {
     loadTasks();
   }, [loadTasks]);
 
-  const retryLoad = useCallback(() => {
+const retryLoad = useCallback(() => {
     loadTasks();
   }, [loadTasks]);
 

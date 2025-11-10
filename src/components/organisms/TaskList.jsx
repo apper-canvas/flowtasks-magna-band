@@ -8,7 +8,7 @@ import TaskModal from "@/components/organisms/TaskModal";
 import TaskCard from "@/components/molecules/TaskCard";
 import Empty from "@/components/ui/Empty";
 
-const TaskList = ({ tasks, searchQuery, onCreateTask }) => {
+const TaskList = ({ tasks, searchQuery, projects = [], onCreateTask }) => {
   const { updateTask, deleteTask, toggleTaskComplete, reorderTasks } = useTasks();
   const [editingTask, setEditingTask] = useState(null);
   const [deletingTaskId, setDeletingTaskId] = useState(null);
@@ -141,13 +141,13 @@ return (
           </div>
         </SortableContext>
       </DndContext>
-
 {/* Task Edit Modal */}
       <TaskModal
         isOpen={!!editingTask}
         onClose={handleCloseTaskModal}
         onSubmit={handleUpdateTask}
         task={editingTask}
+        projects={projects}
         loading={taskModalLoading}
       />
 

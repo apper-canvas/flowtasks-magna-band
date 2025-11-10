@@ -1,5 +1,7 @@
-import { getApperClient } from "@/services/apperClient";
 import { toast } from "react-toastify";
+import React from "react";
+import { getApperClient } from "@/services/apperClient";
+import Error from "@/components/ui/Error";
 
 class TaskService {
   async getAll() {
@@ -18,8 +20,9 @@ class TaskService {
           {"field": {"Name": "category_c"}},
           {"field": {"Name": "due_date_c"}},
           {"field": {"Name": "status_c"}},
-          {"field": {"Name": "created_at_c"}},
+{"field": {"Name": "created_at_c"}},
           {"field": {"Name": "completed_at_c"}},
+          {"field": {"Name": "project_c"}},
           {"field": {"Name": "order_c"}}
         ],
         orderBy: [{"fieldName": "order_c", "sorttype": "ASC"}]
@@ -45,7 +48,9 @@ class TaskService {
         status: task.status_c,
         createdAt: task.created_at_c,
         completedAt: task.completed_at_c,
-        order: task.order_c || 0
+order: task.order_c || 0,
+        projectId: task.project_c?.Id || null,
+        project: task.project_c || null
       }));
     } catch (error) {
       console.error("Error fetching tasks:", error?.response?.data?.message || error.message);
@@ -71,8 +76,9 @@ class TaskService {
           {"field": {"Name": "due_date_c"}},
           {"field": {"Name": "status_c"}},
           {"field": {"Name": "created_at_c"}},
-          {"field": {"Name": "completed_at_c"}},
-          {"field": {"Name": "order_c"}}
+{"field": {"Name": "completed_at_c"}},
+          {"field": {"Name": "order_c"}},
+          {"field": {"Name": "project_c"}}
         ]
       };
 
@@ -93,8 +99,10 @@ class TaskService {
         dueDate: response.data.due_date_c,
         status: response.data.status_c,
         createdAt: response.data.created_at_c,
-        completedAt: response.data.completed_at_c,
-        order: response.data.order_c || 0
+completedAt: response.data.completed_at_c,
+        order: response.data.order_c || 0,
+        projectId: response.data.project_c?.Id || null,
+        project: response.data.project_c || null
       };
     } catch (error) {
       console.error(`Error fetching task ${id}:`, error?.response?.data?.message || error.message);
@@ -108,7 +116,9 @@ class TaskService {
       if (!apperClient) {
         throw new Error('ApperClient not available');
       }
-
+// Handle project_c lookup field - send only ID for create operations
+      const projectId = taskData.projectId ? parseInt(taskData.projectId) : null;
+      
       const params = {
         records: [{
           title_c: taskData.title,
@@ -119,7 +129,8 @@ class TaskService {
           status_c: "active",
           created_at_c: new Date().toISOString(),
           completed_at_c: null,
-          order_c: 0
+          order_c: 0,
+          project_c: projectId
         }]
       };
 
@@ -146,8 +157,10 @@ class TaskService {
           dueDate: newTask.due_date_c,
           status: newTask.status_c,
           createdAt: newTask.created_at_c,
-          completedAt: newTask.completed_at_c,
-          order: newTask.order_c || 0
+completedAt: newTask.completed_at_c,
+          order: newTask.order_c || 0,
+          projectId: newTask.project_c?.Id || null,
+          project: newTask.project_c || null
         };
       }
 
@@ -166,8 +179,10 @@ class TaskService {
       }
 
       // Prepare update data with only updateable fields
-      const updateData = {
-        Id: id
+const updateData = {
+        Id: id,
+        // Handle project_c lookup field - send only ID for update operations  
+        project_c: updates.projectId ? parseInt(updates.projectId) : null
       };
 
       if (updates.title !== undefined) updateData.title_c = updates.title;
@@ -212,8 +227,10 @@ class TaskService {
           dueDate: updatedTask.due_date_c,
           status: updatedTask.status_c,
           createdAt: updatedTask.created_at_c,
-          completedAt: updatedTask.completed_at_c,
-          order: updatedTask.order_c || 0
+completedAt: updatedTask.completed_at_c,
+          order: updatedTask.order_c || 0,
+          projectId: updatedTask.project_c?.Id || null,
+          project: updatedTask.project_c || null
         };
       }
 
@@ -274,11 +291,10 @@ class TaskService {
       }
 
       // Update order for each task
-      const updateRecords = taskIds.map((id, index) => ({
+const updateRecords = taskIds.map((id, index) => ({
         Id: id,
         order_c: index
       }));
-
       const params = {
         records: updateRecords
       };

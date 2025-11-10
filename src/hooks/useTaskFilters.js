@@ -2,14 +2,14 @@ import { useState, useMemo } from "react";
 import { format, isAfter, isBefore, startOfDay } from "date-fns";
 
 export const useTaskFilters = (tasks) => {
-  const [filters, setFilters] = useState({
+const [filters, setFilters] = useState({
     status: "all", // all, active, completed
     sortBy: "priority", // priority, dueDate, createdAt
     searchQuery: "",
-    selectedCategory: null
+    selectedProject: null
   });
 
-  const updateFilter = (key, value) => {
+const updateFilter = (key, value) => {
     setFilters(prev => ({
       ...prev,
       [key]: value
@@ -17,17 +17,16 @@ export const useTaskFilters = (tasks) => {
   };
 
   const clearFilters = () => {
-    setFilters({
+setFilters({
       status: "all",
       sortBy: "priority",
       searchQuery: "",
-      selectedCategory: null
+      selectedProject: null
     });
   };
 
   const filteredAndSortedTasks = useMemo(() => {
     let filtered = [...tasks];
-
     // Filter by status
     if (filters.status !== "all") {
       filtered = filtered.filter(task => task.status === filters.status);
@@ -80,7 +79,7 @@ export const useTaskFilters = (tasks) => {
     });
 
     return filtered;
-  }, [tasks, filters]);
+}, [tasks, filters]);
 
   const taskStats = useMemo(() => {
     const total = tasks.length;
@@ -106,8 +105,7 @@ export const useTaskFilters = (tasks) => {
       completionRate: total > 0 ? Math.round((completed / total) * 100) : 0
     };
   }, [tasks]);
-
-  return {
+return {
     filters,
     updateFilter,
     clearFilters,
