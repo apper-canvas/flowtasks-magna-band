@@ -13,12 +13,13 @@ const ProjectNavigation = ({
   onProjectsUpdate,
   isLoading = false 
 }) => {
-  const [showCreateModal, setShowCreateModal] = useState(false);
+const [showCreateModal, setShowCreateModal] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
-
+  const [editingProject, setEditingProject] = useState(null);
+  const [editLoading, setEditLoading] = useState(false);
   const handleCreateProject = async (projectData) => {
     try {
-      setCreateLoading(true);
+setCreateLoading(true);
       const newProject = await projectService.create(projectData);
       toast.success('Project created successfully!');
       onProjectsUpdate();
@@ -28,6 +29,30 @@ const ProjectNavigation = ({
     } finally {
       setCreateLoading(false);
     }
+  };
+
+  const handleEditProject = (project) => {
+    setEditingProject(project);
+  };
+
+  const handleUpdateProject = async (projectData) => {
+    if (!editingProject) return;
+    
+    try {
+      setEditLoading(true);
+      await projectService.update(editingProject.id, projectData);
+      toast.success('Project updated successfully!');
+      onProjectsUpdate();
+      setEditingProject(null);
+    } catch (error) {
+      toast.error(error.message || 'Failed to update project');
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
+  const handleCloseEditModal = () => {
+    setEditingProject(null);
   };
 
   return (
@@ -101,88 +126,103 @@ const ProjectNavigation = ({
                     exit={{ opacity: 0, y: -20 }}
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => onSelectProject(project)}
-                    className={`w-full p-4 rounded-xl cursor-pointer text-left transition-all duration-300 border-2 ${
+                    className={`w-full p-4 rounded-xl text-left transition-all duration-300 border-2 relative group ${
                       selectedProject?.id === project.id 
                         ? 'bg-gradient-primary text-white shadow-xl border-indigo-300 transform scale-105' 
                         : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200 hover:border-indigo-200 shadow-sm hover:shadow-md'
                     }`}
-                  >
-                    <div className="space-y-3">
-                      {/* Header with project indicator and name */}
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className={`w-4 h-4 rounded-full flex-shrink-0 ${
+>
+                    <div onClick={() => onSelectProject(project)} className="cursor-pointer">
+                      <div className="space-y-3">
+                        {/* Header with project indicator and name */}
+                        <div className="flex items-center gap-3">
+                          <div 
+                            className={`w-4 h-4 rounded-full flex-shrink-0 ${
+                              selectedProject?.id === project.id 
+                                ? 'bg-white' 
+                                : project.color || 'bg-indigo-400'
+                            }`} 
+                            style={selectedProject?.id !== project.id ? { backgroundColor: project.color || '#6366f1' } : {}}
+                          />
+                          <h3 className="font-semibold text-lg truncate flex-1">
+                            {project.name}
+                          </h3>
+                        </div>
+
+                        {/* Description preview */}
+                        {project.description && (
+                          <p className={`text-sm leading-relaxed line-clamp-2 ${
                             selectedProject?.id === project.id 
-                              ? 'bg-white' 
-                              : project.color || 'bg-indigo-400'
-                          }`} 
-                          style={selectedProject?.id !== project.id ? { backgroundColor: project.color || '#6366f1' } : {}}
-                        />
-                        <h3 className="font-semibold text-lg truncate flex-1">
-                          {project.name}
-                        </h3>
+                              ? 'text-white/90' 
+                              : 'text-gray-600'
+                          }`}>
+                            {project.description.substring(0, 80)}{project.description.length > 80 ? '...' : ''}
+                          </p>
+                        )}
+
+                        {/* Project metadata */}
+                        <div className="space-y-2">
+                          {(project.startDate || project.endDate) && (
+                            <div className={`text-xs flex items-center gap-2 ${
+                              selectedProject?.id === project.id 
+                                ? 'text-white/80' 
+                                : 'text-gray-500'
+                            }`}>
+                              <span className="font-medium">Timeline:</span>
+                              <span>
+                                {project.startDate && project.endDate 
+                                  ? `${new Date(project.startDate).toLocaleDateString()} - ${new Date(project.endDate).toLocaleDateString()}`
+                                  : project.startDate 
+                                    ? `Starts ${new Date(project.startDate).toLocaleDateString()}`
+                                    : `Ends ${new Date(project.endDate).toLocaleDateString()}`
+                                }
+                              </span>
+                            </div>
+                          )}
+                          
+                          {project.milestone && (
+                            <div className={`text-xs flex items-center gap-2 ${
+                              selectedProject?.id === project.id 
+                                ? 'text-white/80' 
+                                : 'text-gray-500'
+                            }`}>
+                              <span className="font-medium">Milestone:</span>
+                              <span className="truncate">{project.milestone}</span>
+                            </div>
+                          )}
+
+                          {project.tags && (
+                            <div className={`text-xs flex items-center gap-2 ${
+                              selectedProject?.id === project.id 
+                                ? 'text-white/80' 
+                                : 'text-gray-500'
+                            }`}>
+                              <span className="font-medium">Tags:</span>
+                              <span className="truncate">{project.tags}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-
-                      {/* Description preview */}
-                      {project.description && (
-                        <p className={`text-sm leading-relaxed line-clamp-2 ${
-                          selectedProject?.id === project.id 
-                            ? 'text-white/90' 
-                            : 'text-gray-600'
-                        }`}>
-                          {project.description.substring(0, 80)}{project.description.length > 80 ? '...' : ''}
-                        </p>
-                      )}
-
-                      {/* Project metadata */}
-                      <div className="space-y-2">
-                        {(project.startDate || project.endDate) && (
-                          <div className={`text-xs flex items-center gap-2 ${
-                            selectedProject?.id === project.id 
-                              ? 'text-white/80' 
-                              : 'text-gray-500'
-                          }`}>
-                            <span className="font-medium">Timeline:</span>
-                            <span>
-                              {project.startDate && project.endDate 
-                                ? `${new Date(project.startDate).toLocaleDateString()} - ${new Date(project.endDate).toLocaleDateString()}`
-                                : project.startDate 
-                                  ? `Starts ${new Date(project.startDate).toLocaleDateString()}`
-                                  : `Ends ${new Date(project.endDate).toLocaleDateString()}`
-                              }
-                            </span>
-                          </div>
-                        )}
-                        
-                        {project.milestone && (
-                          <div className={`text-xs flex items-center gap-2 ${
-                            selectedProject?.id === project.id 
-                              ? 'text-white/80' 
-                              : 'text-gray-500'
-                          }`}>
-                            <span className="font-medium">Milestone:</span>
-                            <span className="truncate">{project.milestone}</span>
-                          </div>
-                        )}
-
-                        {project.tags && (
-                          <div className={`text-xs flex items-center gap-2 ${
-                            selectedProject?.id === project.id 
-                              ? 'text-white/80' 
-                              : 'text-gray-500'
-                          }`}>
-                            <span className="font-medium">Tags:</span>
-                            <span className="truncate">{project.tags}</span>
-                          </div>
-                        )}
-</div>
                     </div>
+
+                    {/* Edit button - appears on hover */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditProject(project);
+                      }}
+                      className={`absolute top-2 right-2 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 ${
+                        selectedProject?.id === project.id
+                          ? 'bg-white/20 hover:bg-white/30 text-white'
+                          : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                      }`}
+                    >
+                      <ApperIcon name="Edit" size={14} />
+                    </button>
                   </motion.div>
                 ))}
               </AnimatePresence>
             )}
-
             {!isLoading && projects.length === 0 && (
               <div className="text-center py-8 text-gray-500">
                 <ApperIcon name="Package" size={32} className="mx-auto mb-2 text-gray-300" />
@@ -194,12 +234,21 @@ const ProjectNavigation = ({
         </div>
       </motion.nav>
 
-      {/* Create Project Modal */}
+{/* Create Project Modal */}
       <ProjectModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onSubmit={handleCreateProject}
         loading={createLoading}
+      />
+
+      {/* Edit Project Modal */}
+      <ProjectModal
+        isOpen={!!editingProject}
+        onClose={handleCloseEditModal}
+        onSubmit={handleUpdateProject}
+        project={editingProject}
+        loading={editLoading}
       />
     </>
   );

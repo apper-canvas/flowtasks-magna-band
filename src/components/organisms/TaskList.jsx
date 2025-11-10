@@ -59,12 +59,11 @@ const TaskList = ({ tasks, searchQuery, projects = [], onCreateTask }) => {
     setEditingTask(null);
   };
 
-  const handleUpdateTask = async (taskData) => {
+const handleUpdateTask = async (taskData) => {
     if (!editingTask) return;
-    
     try {
-      setTaskModalLoading(true);
-      await updateTask(editingTask.id, taskData);
+setTaskModalLoading(true);
+      const updatedTask = await updateTask(editingTask.id, taskData);
       setEditingTask(null);
     } catch (error) {
       console.error('Error updating task:', error);

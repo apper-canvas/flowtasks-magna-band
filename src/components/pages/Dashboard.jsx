@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Header from "@/components/organisms/Header";
-import FilterBar from "@/components/organisms/FilterBar";
-import TaskList from "@/components/organisms/TaskList";
-import TaskModal from "@/components/organisms/TaskModal";
-import ProjectNavigation from "@/components/organisms/ProjectNavigation";
-import Loading from "@/components/ui/Loading";
-import Error from "@/components/ui/Error";
 import { useTasks } from "@/hooks/useTasks";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { projectService } from "@/services/api/projectService";
 import { toast } from "react-toastify";
+import FilterBar from "@/components/organisms/FilterBar";
+import Header from "@/components/organisms/Header";
+import TaskModal from "@/components/organisms/TaskModal";
+import TaskList from "@/components/organisms/TaskList";
+import ProjectNavigation from "@/components/organisms/ProjectNavigation";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
 const Dashboard = () => {
 const { tasks, loading, error, createTask, retryLoad } = useTasks();
   const { 
@@ -132,11 +132,22 @@ return (
             transition={{ delay: 0.2, duration: 0.4 }}
             className="flex-1 overflow-y-auto p-6"
           >
-            <TaskList
+<TaskList
               tasks={filteredAndSortedTasks}
               searchQuery={filters.searchQuery}
               projects={projects}
               onCreateTask={handleCreateTask}
+updateTask={async (id, taskData) => {
+                try {
+                  const taskService = (await import('@/services/api/taskService.js')).default;
+                  const updatedTask = await taskService.update(id, taskData);
+                  toast.success('Task updated successfully!');
+                  return updatedTask;
+                } catch (error) {
+                  toast.error(error.message || 'Failed to update task');
+                  throw error;
+                }
+              }}
             />
           </motion.div>
         </motion.div>
