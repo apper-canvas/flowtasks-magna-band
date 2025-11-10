@@ -4,13 +4,13 @@ import Header from "@/components/organisms/Header";
 import FilterBar from "@/components/organisms/FilterBar";
 import TaskList from "@/components/organisms/TaskList";
 import TaskModal from "@/components/organisms/TaskModal";
+import ProjectNavigation from "@/components/organisms/ProjectNavigation";
 import Loading from "@/components/ui/Loading";
 import Error from "@/components/ui/Error";
 import { useTasks } from "@/hooks/useTasks";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { projectService } from "@/services/api/projectService";
 import { toast } from "react-toastify";
-
 const Dashboard = () => {
 const { tasks, loading, error, createTask, retryLoad } = useTasks();
   const { 
@@ -25,7 +25,7 @@ const { tasks, loading, error, createTask, retryLoad } = useTasks();
   const [createModalLoading, setCreateModalLoading] = useState(false);
   const [projects, setProjects] = useState([]);
   const [projectsLoading, setProjectsLoading] = useState(true);
-  
+  const [selectedProject, setSelectedProject] = useState(null);
   // Load projects on component mount
   useEffect(() => {
     const loadProjects = async () => {
@@ -60,6 +60,15 @@ const handleSubmitCreate = async (taskData) => {
     }
   };
 
+const handleSelectProject = (project) => {
+    setSelectedProject(project);
+    updateFilter('selectedProject', project?.id || null);
+  };
+
+  const handleProjectsUpdate = () => {
+    loadProjects();
+  };
+
   const handleClearSearch = () => {
     updateFilter("searchQuery", "");
   };
@@ -84,20 +93,31 @@ if (loading || projectsLoading) {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100">
-      <div className="max-w-4xl mx-auto p-4 py-8">
+return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 flex">
+      {/* Navigation Sidebar */}
+      <ProjectNavigation
+        projects={projects}
+        selectedProject={selectedProject}
+        onSelectProject={handleSelectProject}
+        onProjectsUpdate={handleProjectsUpdate}
+        isLoading={projectsLoading}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4 }}
         >
-<Header 
+          <Header 
             taskStats={taskStats} 
-            onCreateTask={handleCreateTask} 
+            onCreateTask={handleCreateTask}
+            selectedProject={selectedProject}
           />
           
-<FilterBar
+          <FilterBar
             filters={filters}
             onUpdateFilter={updateFilter}
             taskStats={taskStats}
@@ -109,8 +129,9 @@ if (loading || projectsLoading) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.4 }}
+            className="flex-1 overflow-y-auto p-6"
           >
-<TaskList
+            <TaskList
               tasks={filteredAndSortedTasks}
               searchQuery={filters.searchQuery}
               projects={projects}
@@ -121,7 +142,7 @@ if (loading || projectsLoading) {
       </div>
 
       {/* Create Task Modal */}
-<TaskModal
+      <TaskModal
         isOpen={createModalOpen}
         onClose={handleCloseCreateModal}
         onSubmit={handleSubmitCreate}

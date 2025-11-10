@@ -6,7 +6,7 @@ import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import ProgressRing from "@/components/molecules/ProgressRing";
 import { useAuth } from "@/layouts/Root";
-const Header = ({ taskStats, onCreateTask }) => {
+const Header = ({ taskStats, onCreateTask, selectedProject, onOpenProfile }) => {
   const { logout } = useAuth();
   const { user } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -22,26 +22,34 @@ const Header = ({ taskStats, onCreateTask }) => {
     setShowUserMenu(false);
   };
 
-  return (
+return (
     <motion.header 
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white shadow-sm border-b border-gray-100 px-6 py-4"
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="flex items-center justify-between">
+        {/* Project Context Section */}
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-3">
             <motion.div
               initial={{ rotate: 0 }}
               animate={{ rotate: 360 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center"
+              className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center"
             >
-              <ApperIcon name="CheckSquare" size={24} className="text-white" />
+              <ApperIcon name={selectedProject ? "Package" : "CheckSquare"} size={20} className="text-white" />
             </motion.div>
             <div>
-              <h1 className="text-3xl font-bold text-gradient">FlowTasks</h1>
-              <p className="text-gray-600">Organize your tasks efficiently</p>
+              <h1 className="text-2xl font-bold text-gradient">
+                {selectedProject ? selectedProject.name : 'All Projects'}
+              </h1>
+              <p className="text-sm text-gray-600">
+                {selectedProject 
+                  ? (selectedProject.tags || 'Project tasks') 
+                  : 'Organize your tasks efficiently'
+                }
+              </p>
             </div>
           </div>
           
@@ -49,8 +57,8 @@ const Header = ({ taskStats, onCreateTask }) => {
             <div className="flex items-center gap-4">
               <ProgressRing 
                 progress={taskStats.completionRate} 
-                size={60} 
-                strokeWidth={5}
+                size={50} 
+                strokeWidth={4}
               />
               <div className="text-sm">
                 <p className="font-semibold text-gray-900">
@@ -72,35 +80,30 @@ const Header = ({ taskStats, onCreateTask }) => {
           )}
         </div>
 
+{/* Actions Section */}
         <div className="flex items-center gap-4">
-          {user && (
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <ApperIcon name="User" size={16} />
-              <span>Welcome, {user.firstName || user.emailAddress}</span>
-            </div>
-          )}
-          
           <Button
             onClick={onCreateTask}
             className="flex items-center gap-2"
             size="lg"
           >
-            <ApperIcon name="Plus" size={20} />
+            <ApperIcon name="Plus" size={18} />
             Add Task
           </Button>
 
+{/* Profile Section */}
           <div className="relative">
             <Button
               onClick={() => setShowUserMenu(!showUserMenu)}
               variant="ghost"
-              className="text-gray-600 hover:text-gray-800 flex items-center gap-2"
+              className="text-gray-600 hover:text-gray-800 flex items-center gap-2 p-2"
             >
               <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-semibold">
                   {user?.firstName?.charAt(0) || 'U'}
                 </span>
               </div>
-              <ApperIcon name="ChevronDown" size={16} />
+              <ApperIcon name="ChevronDown" size={14} />
             </Button>
 
             {showUserMenu && (
