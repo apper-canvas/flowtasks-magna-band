@@ -95,7 +95,6 @@ fields: [
 
   async create(projectData) {
     try {
-      const apperClient = getApperClient();
 const apperClient = getApperClient();
       
       // Only include updateable fields
@@ -110,7 +109,7 @@ const apperClient = getApperClient();
           milestone_c: projectData.milestone || ""
         }]
       };
-
+const response = await apperClient.createRecord('project_c', params);
       if (!response.success) {
         console.error(response.message);
         throw new Error(response.message);
