@@ -159,7 +159,7 @@ return (
         isOpen={!!deletingTaskId}
         onClose={handleCloseDeleteModal}
         onConfirm={handleConfirmDelete}
-        taskTitle={deletingTask?.title || ""}
+taskTitle={deletingTask?.name || deletingTask?.title || ""}
         loading={deleteModalLoading}
       />
     </>

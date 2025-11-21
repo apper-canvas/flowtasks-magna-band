@@ -26,11 +26,12 @@ const categories = [
     { Id: "education", name: "Education" },
 { Id: "other", name: "Other" }
   ];
-  const [formData, setFormData] = useState({
+const [formData, setFormData] = useState({
+    name: "",
     title: "",
     description: "",
     priority: "medium",
-projectId: "",
+    projectId: "",
     dueDate: "",
     assignedTo: ""
   });
@@ -39,6 +40,7 @@ projectId: "",
   useEffect(() => {
 if (task) {
       setFormData({
+name: task.name || "",
         title: task.title || "",
         description: task.description || "",
         priority: task.priority || "medium",
@@ -49,6 +51,7 @@ projectId: task.projectId || "",
       });
     } else {
       setFormData({
+name: "",
         title: "",
         description: "",
         priority: "medium",
@@ -78,6 +81,12 @@ projectId: "",
   const validateForm = () => {
     const newErrors = {};
     
+if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.trim().length < 3) {
+      newErrors.name = "Name must be at least 3 characters";
+    }
+
     if (!formData.title.trim()) {
       newErrors.title = "Title is required";
     } else if (formData.title.trim().length < 3) {
@@ -155,7 +164,16 @@ dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : null,
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+<form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <FormField
+              label="Task Name"
+              required
+              error={errors.name}
+              value={formData.name}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              placeholder="Enter task name"
+            />
+            
             <FormField
               label="Task Title"
               required

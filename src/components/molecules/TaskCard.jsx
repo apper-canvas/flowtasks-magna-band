@@ -145,12 +145,15 @@ return (
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-2">
-            <h3 className={cn(
+<h3 className={cn(
               "font-semibold text-gray-900 text-lg",
               task.status === "completed" && "line-through text-gray-500"
             )}>
-              {task.title}
+              {task.name || task.title}
             </h3>
+            {task.name && task.title && task.name !== task.title && (
+              <p className="text-sm text-gray-600 mt-1">{task.title}</p>
+            )}
             
             <div className="flex items-center gap-2 ml-4">
               <div className={cn("priority-dot", getPriorityColor())} />
