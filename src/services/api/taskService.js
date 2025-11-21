@@ -1,4 +1,5 @@
 import { getApperClient } from '../apperClient.js';
+import { toast } from 'react-toastify';
 
 const taskService = {
   async getAll() {
@@ -112,6 +113,11 @@ async create(taskData) {
     try {
       const apperClient = getApperClient();
       
+// Generate a smaller order value to avoid integer overflow
+      const existingTasks = await this.getAll();
+      const maxOrder = existingTasks.length > 0 ? Math.max(...existingTasks.map(t => t.order_c || 0)) : 0;
+      const nextOrder = maxOrder + 1;
+
       const params = {
         records: [{
           Name: taskData.title,
@@ -122,10 +128,10 @@ async create(taskData) {
           category_c: taskData.category ? parseInt(taskData.category) : null,
           project_c: taskData.projectId ? parseInt(taskData.projectId) : null,
           due_date_c: taskData.dueDate || null,
-status_c: "active",
+          status_c: "active",
           created_at_c: new Date().toISOString(),
           assigned_to_c: taskData.assignedTo ? parseInt(taskData.assignedTo) : null,
-          order_c: Date.now()
+          order_c: nextOrder
         }]
       };
 
@@ -183,7 +189,7 @@ async update(id, updates) {
     try {
       const apperClient = getApperClient();
       
-      const params = {
+const params = {
         records: [{
           Id: id,
           Name: updates.title,
@@ -194,7 +200,7 @@ async update(id, updates) {
           category_c: updates.category ? parseInt(updates.category) : null,
           project_c: updates.projectId ? parseInt(updates.projectId) : null,
           due_date_c: updates.dueDate || null,
-status_c: updates.status || updates.completed ? 'completed' : 'active',
+          status_c: updates.status || (updates.completed ? 'completed' : 'active'),
           completed_at_c: updates.completed ? new Date().toISOString() : null,
           assigned_to_c: updates.assignedTo ? parseInt(updates.assignedTo) : null
         }]
@@ -242,10 +248,7 @@ createdAt: updated.created_at_c || null,
             completed: updated.status_c === 'completed'
           };
           
-          // Import toast at the top of the file if not already imported
-          const { toast } = await import('react-toastify');
-          toast.success("Task updated successfully!");
-          
+toast.success("Task updated successfully!");
           return taskObject;
         }
       }
@@ -284,9 +287,7 @@ async delete(id) {
         }
 
         if (successful.length > 0) {
-          // Import toast at the top of the file if not already imported
-          const { toast } = await import('react-toastify');
-          toast.success("Task deleted successfully!");
+toast.success("Task deleted successfully!");
           return true;
         }
       }
